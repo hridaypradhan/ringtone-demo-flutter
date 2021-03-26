@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:vibration/vibration.dart';
 
 void main() => runApp(MyApp());
 
@@ -6,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material App',
+      debugShowCheckedModeBanner: false,
       home: IncomingCallScreen(),
     );
   }
@@ -22,6 +24,35 @@ class IncomingCallScreen extends StatelessWidget {
         body: Stack(
           alignment: Alignment.center,
           children: [
+            Positioned(
+              bottom: screenSize.height * 0.3,
+              child: Row(
+                children: [
+                  FloatingActionButton(
+                    onPressed: () async {
+                      if (await Vibration.hasVibrator()) {
+                        Vibration.vibrate(
+                          pattern: [1500, 1000, 1500, 1000, 1500, 1000],
+                        );
+                      }
+                      FlutterRingtonePlayer.playRingtone();
+                    },
+                    child: Text('Default Ringtone'),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () async {
+                      if (await Vibration.hasVibrator()) {
+                        Vibration.vibrate(
+                          pattern: [1500, 1000, 1500, 1000, 1500, 1000],
+                        );
+                      }
+                      FlutterRingtonePlayer.playNotification(looping: true);
+                    },
+                    child: Text('Default Notif'),
+                  ),
+                ],
+              ),
+            ),
             Positioned(
               top: screenSize.height * 0.1,
               child: Column(
@@ -59,7 +90,10 @@ class IncomingCallScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   CallActionButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      FlutterRingtonePlayer.stop();
+                      Vibration.cancel();
+                    },
                     label: 'Decline',
                     icon: Icons.call_end,
                     color: Colors.red,
@@ -68,7 +102,10 @@ class IncomingCallScreen extends StatelessWidget {
                     width: screenSize.width * 0.3,
                   ),
                   CallActionButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      FlutterRingtonePlayer.stop();
+                      Vibration.cancel();
+                    },
                     label: 'Accept',
                     icon: Icons.call,
                     color: Colors.green,

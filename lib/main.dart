@@ -1,3 +1,4 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:vibration/vibration.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
 }
 
 class IncomingCallScreen extends StatelessWidget {
+  final assetsAudioPlayer = AssetsAudioPlayer();
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -49,6 +51,21 @@ class IncomingCallScreen extends StatelessWidget {
                       FlutterRingtonePlayer.playNotification(looping: true);
                     },
                     child: Text('Default Notif'),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () async {
+                      if (await Vibration.hasVibrator()) {
+                        Vibration.vibrate(
+                          pattern: [1500, 1000, 1500, 1000, 1500, 1000],
+                        );
+                      }
+
+                      assetsAudioPlayer.open(
+                        Audio("lib/highhopes.mp3"),
+                      );
+                      assetsAudioPlayer.play();
+                    },
+                    child: Text('Custom Sound'),
                   ),
                 ],
               ),
@@ -93,6 +110,7 @@ class IncomingCallScreen extends StatelessWidget {
                     onPressed: () {
                       FlutterRingtonePlayer.stop();
                       Vibration.cancel();
+                      assetsAudioPlayer.stop();
                     },
                     label: 'Decline',
                     icon: Icons.call_end,
@@ -105,6 +123,7 @@ class IncomingCallScreen extends StatelessWidget {
                     onPressed: () {
                       FlutterRingtonePlayer.stop();
                       Vibration.cancel();
+                      assetsAudioPlayer.stop();
                     },
                     label: 'Accept',
                     icon: Icons.call,
